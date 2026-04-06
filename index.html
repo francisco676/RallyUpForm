@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RallyUp | Apply for a Content Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #09090b;
+      --surface: #18181b;
+      --surface2:#1f1f23;
+      --border:  #3f3f46;
+      --border2: #27272a;
+      --text:    #fafafa;
+      --text2:   #a1a1aa;
+      --text3:   #71717a;
+      --accent:  #5B6FFF;
+      --accent2: rgba(91,111,255,0.12);
+      --accent3: rgba(91,111,255,0.25);
+      --lime:    #D8EC6A;
+      --lime2:   rgba(216,236,106,0.1);
+      --red:     #f87171;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px 100px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grid texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(91,111,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Logo */
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 44px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 52px 48px;
+      max-width: 580px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 80px rgba(0,0,0,0.4);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--lime2);
+      border: 1px solid rgba(216,236,106,0.25);
+      color: var(--lime);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 22px;
+    }
+
+    .badge::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: var(--lime);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .subtitle {
+      color: var(--text2);
+      font-size: 0.9rem;
+      line-height: 1.65;
+      margin-bottom: 40px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 16px;
+      margin-top: 28px;
+    }
+
+    /* Field grid */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 7px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 9px;
+      padding: 11px 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(91,111,255,0.15);
+    }
+
+    input::placeholder { color: #3f3f46; }
+
+    select {
+      cursor: pointer;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2371717a' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    select option { background: #18181b; }
+
+    /* Radio options */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 9px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      user-select: none;
+    }
+
+    .radio-option:hover {
+      border-color: var(--border);
+      background: #111113;
+    }
+
+    .radio-option.selected {
+      border-color: var(--accent);
+      background: var(--accent2);
+    }
+
+    .radio-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      position: relative;
+      transition: border-color 0.18s;
+    }
+
+    .radio-option.selected .radio-dot {
+      border-color: var(--accent);
+    }
+
+    .radio-option.selected .radio-dot::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .radio-option span {
+      font-size: 0.865rem;
+      color: var(--text2);
+      line-height: 1.4;
+    }
+
+    .radio-option.selected span { color: var(--text); }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      color: var(--red);
+      font-size: 0.8rem;
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 8px;
+    }
+
+    /* Submit */
+    .submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 28px;
+      transition: opacity 0.18s, transform 0.12s;
+      letter-spacing: 0.01em;
+    }
+
+    .submit-btn:hover:not(:disabled) { opacity: 0.88; }
+    .submit-btn:active:not(:disabled) { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .fine-print {
+      text-align: center;
+      color: var(--text3);
+      font-size: 0.76rem;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    /* =====================
+       RESULT SCREENS
+    ===================== */
+    .result {
+      display: none;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 22px;
+    }
+
+    .result-badge.fit {
+      background: rgba(216,236,106,0.1);
+      border: 1px solid rgba(216,236,106,0.25);
+      color: var(--lime);
+    }
+
+    .result-badge.notfit {
+      background: var(--accent2);
+      border: 1px solid var(--accent3);
+      color: var(--accent);
+    }
+
+    .result h2 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.4px;
+      margin-bottom: 14px;
+    }
+
+    .result p {
+      color: var(--text2);
+      font-size: 0.88rem;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+
+    .result-btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 9px;
+      padding: 15px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: opacity 0.18s, transform 0.12s;
+      letter-spacing: 0.01em;
+    }
+
+    .result-btn:hover { opacity: 0.88; }
+    .result-btn:active { transform: scale(0.99); }
+
+    .result-btn.lime {
+      background: var(--lime);
+      color: #09090b;
+    }
+
+    .result-btn.accent {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border2);
+      margin: 28px 0;
+    }
+
+    .social-proof {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .proof-item {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .proof-num {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--lime);
+      letter-spacing: -0.5px;
+      display: block;
+    }
+
+    .proof-label {
+      font-size: 0.73rem;
+      color: var(--text3);
+      display: block;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      color: var(--text3);
+      font-size: 0.78rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer a {
+      color: var(--text3);
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--text2); }
+
+    @media (max-width: 560px) {
+      .card { padding: 32px 22px; }
+      .field-row { grid-template-columns: 1fr; }
+      h1 { font-size: 1.5rem; }
+      .result h2 { font-size: 1.35rem; }
+      .social-proof { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">Rally<span style="color:var(--lime)">Up</span></div>
+
+  <div class="card">
+
+    <!-- =============== FORM VIEW =============== -->
+    <div id="form-view">
+
+      <div class="badge">5 spots open this month</div>
+
+      <h1>See your exec's content<br><span style="color:var(--lime)">built live on the call.</span></h1>
+
+      <p class="subtitle">
+        We build your context layer before we meet. In 20 minutes, you see it working for your exec's specific profile and voice. You keep everything we create whether we work together or not.
+      </p>
+
+      <p class="section-label">Your details</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="name">Full name</label>
+          <input type="text" id="name" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label class="field-label" for="email">Email</label>
+          <input type="email" id="email" placeholder="you@company.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="linkedin">Your LinkedIn profile URL</label>
+        <input type="text" id="linkedin" placeholder="linkedin.com/in/yourname">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="company">Company name</label>
+          <input type="text" id="company" placeholder="Acme Inc.">
+        </div>
+        <div class="field">
+          <label class="field-label" for="website">Company website</label>
+          <input type="text" id="website" placeholder="acme.com">
+        </div>
+      </div>
+
+      <p class="section-label" style="margin-top:24px;">Your role</p>
+
+      <div class="field">
+        <select id="role">
+          <option value="" disabled selected>Select your role</option>
+          <option value="Founder / CEO">Founder / CEO</option>
+          <option value="C-Suite Executive">C-Suite Executive (CRO, CMO, COO...)</option>
+          <option value="VP / Director">VP / Director</option>
+          <option value="Managing for exec">I manage this for an exec on my team</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <p class="section-label" style="margin-top:24px;">What's your biggest LinkedIn problem right now?</p>
+
+      <div class="radio-group" id="problem-group">
+        <div class="radio-option" onclick="selectProblem(this, 'No time to post')">
+          <div class="radio-dot"></div>
+          <span>I know I should post but never get around to it</span>
+        </div>
+        <div class="radio-option" onclick="selectProblem(this, 'Low reach or engagement')">
+          <div class="radio-dot"></div>
+          <span>I post but get little reach or engagement</span>
+        </div>
+        <div class="radio-option" onclick="selectProblem(this, 'Content sounds generic')">
+          <div class="radio-dot"></div>
+          <span>My content sounds generic and not like me</span>
+        </div>
+        <div class="radio-option" onclick="selectProblem(this, 'No system or consistency')">
+          <div class="radio-dot"></div>
+          <span>I have no system and no consistency</span>
+        </div>
+        <div class="radio-option" onclick="selectProblem(this, 'Just exploring')">
+          <div class="radio-dot"></div>
+          <span>I'm just exploring for now</span>
+        </div>
+      </div>
+
+      <div class="error-msg" id="error-msg">Please fill in all fields before submitting.</div>
+
+      <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">
+        Apply for a session &rarr;
+      </button>
+
+      <p class="fine-print">We review every submission personally &middot; No spam, ever</p>
+
+    </div>
+
+    <!-- =============== FIT RESULT =============== -->
+    <div class="result" id="result-fit">
+
+      <div class="result-badge fit">You're a great fit</div>
+
+      <h2>Book your session<br><span style="color:var(--lime)">with Alec below.</span></h2>
+
+      <p>We'll build your exec's full context layer before we meet. In 20 minutes on the call, you'll see exactly how the system creates high-quality, authentic content for their specific voice and profile. You keep everything we build whether we work together or not.</p>
+
+      <div class="social-proof">
+        <div class="proof-item">
+          <span class="proof-num">15-20K</span>
+          <span class="proof-label">impressions per post for our current clients</span>
+        </div>
+        <div class="proof-item">
+          <span class="proof-num">2 min</span>
+          <span class="proof-label">weekly time commitment from the exec</span>
+        </div>
+        <div class="proof-item">
+          <span class="proof-num">5 spots</span>
+          <span class="proof-label">available this month</span>
+        </div>
+      </div>
+
+      <a href="https://calendar.app.google/SDA5TMRMbqbPQWEn7" target="_blank" class="result-btn lime">
+        Book your 20-minute session with Alec &rarr;
+      </a>
+
+      <div class="divider"></div>
+
+      <p style="font-size:0.78rem; color:var(--text3); text-align:center; margin-bottom:0;">
+        First come, first served. Spots fill fast.
+      </p>
+
+    </div>
+
+    <!-- =============== NOT FIT RESULT =============== -->
+    <div class="result" id="result-notfit">
+
+      <div class="result-badge notfit">We'll stay in touch</div>
+
+      <h2>We're selective right now.<br><span style="color:var(--lime)">But here's the system, free.</span></h2>
+
+      <p>We're only taking on a small number of managed clients this month. But we don't want you leaving empty-handed. Below is the exact system we use to build exec content, completely free. You can set it up yourself in under 20 minutes inside Claude and start generating content that passes LinkedIn's authenticity filters.</p>
+
+      <a href="https://voiceclonemethod.vercel.app/" target="_blank" class="result-btn accent">
+        Get the free content system &rarr;
+      </a>
+
+      <div class="divider"></div>
+
+      <p style="font-size:0.78rem; color:var(--text3); text-align:center; margin-bottom:0;">
+        We'll reach out when we have capacity and think you're a fit for the managed programme.
+      </p>
+
+    </div>
+
+  </div>
+
+  <footer>Built by <a href="https://rallyup.team">RallyUp</a></footer>
+
+  <script>
+    // REPLACE THIS with your deployed Google Apps Script Web App URL
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyWB2ReuOZGX3fpJAcGGf8qr-4ACHnU-meT2n_-IEBmpSOAHix-Xe0Hjzk1nKNUjBIu/exec';
+
+    let selectedProblem = '';
+
+    function selectProblem(el, value) {
+      document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedProblem = value;
+    }
+
+    function validate() {
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const linkedin= document.getElementById('linkedin').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const website = document.getElementById('website').value.trim();
+      const role    = document.getElementById('role').value;
+      return name && email && email.includes('@') && linkedin && company && website && role && selectedProblem;
+    }
+
+    function isFit() {
+      const role = document.getElementById('role').value;
+      return role !== 'Other' && selectedProblem !== 'Just exploring';
+    }
+
+    async function handleSubmit() {
+      const errorMsg = document.getElementById('error-msg');
+      const btn      = document.getElementById('submit-btn');
+
+      if (!validate()) {
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+      btn.disabled    = true;
+      btn.textContent = 'Submitting...';
+
+      const fit = isFit();
+
+      const payload = {
+        timestamp: new Date().toISOString(),
+        name:      document.getElementById('name').value.trim(),
+        email:     document.getElementById('email').value.trim(),
+        linkedin:  document.getElementById('linkedin').value.trim(),
+        company:   document.getElementById('company').value.trim(),
+        website:   document.getElementById('website').value.trim(),
+        role:      document.getElementById('role').value,
+        problem:   selectedProblem,
+        outcome:   fit ? 'Fit' : 'Not Fit'
+      };
+
+      // Log to Google Sheets (fire-and-forget, no-cors)
+      try {
+        fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch(e) {
+        console.error('Logging failed:', e);
+      }
+
+      // Show result immediately (client-side routing, no need to wait for Sheets)
+      document.getElementById('form-view').style.display = 'none';
+      if (fit) {
+        document.getElementById('result-fit').style.display = 'block';
+      } else {
+        document.getElementById('result-notfit').style.display = 'block';
+      }
+
+      // Scroll to top of card
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>
