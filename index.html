@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RallyUp | Find Your Fit</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:  #09090b;
+      --s1:  #18181b;
+      --s2:  #1c1c1f;
+      --b1:  #27272a;
+      --b2:  #3f3f46;
+      --t1:  #fafafa;
+      --t2:  #a1a1aa;
+      --t3:  #52525b;
+      --ac:  #5B6FFF;
+      --ac2: rgba(91,111,255,.10);
+      --ac3: rgba(91,111,255,.22);
+      --lm:  #D8EC6A;
+      --lm2: rgba(216,236,106,.10);
+      --red: #f87171;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--t1);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 42px 42px;
+      pointer-events: none; z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 500px;
+      background: radial-gradient(ellipse, rgba(91,111,255,.07) 0%, transparent 65%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .app {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 20px 80px;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .pt {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--b1); z-index: 200;
+      opacity: 0; transition: opacity .3s;
+    }
+    .pt.on { opacity: 1; }
+    .pf {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ac), var(--lm));
+      width: 0%; transition: width .45s cubic-bezier(.4,0,.2,1);
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      width: 100%; max-width: 520px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 0 12px;
+    }
+
+    .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -.3px; }
+    .logo b { color: var(--lm); }
+
+    .bk {
+      background: none; border: 1px solid var(--b1); color: var(--t2);
+      font-family: 'DM Sans', sans-serif; font-size: .8rem; font-weight: 500;
+      padding: 6px 14px; border-radius: 8px; cursor: pointer; transition: all .18s;
+      opacity: 0; pointer-events: none;
+    }
+    .bk.on { opacity: 1; pointer-events: auto; }
+    .bk:hover { border-color: var(--b2); color: var(--t1); }
+
+    .sl { font-size: .75rem; color: var(--t3); font-weight: 500; opacity: 0; transition: opacity .3s; }
+    .sl.on { opacity: 1; }
+
+    /* ── STEPS ── */
+    .wrap { width: 100%; max-width: 520px; }
+
+    .step { display: none; flex-direction: column; }
+    .step.active { display: flex; animation: sIn .3s cubic-bezier(.2,0,0,1) both; }
+    .step.active.bwd { animation: sInB .3s cubic-bezier(.2,0,0,1) both; }
+
+    @keyframes sIn  { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes sInB { from{opacity:0;transform:translateX(-24px)} to{opacity:1;transform:translateX(0)} }
+
+    /* ── INTRO ── */
+    .intro {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding-top: 20px;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--lm2); border: 1px solid rgba(216,236,106,.22); color: var(--lm);
+      font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      padding: 5px 13px; border-radius: 100px; margin-bottom: 24px;
+    }
+    .badge::before {
+      content: ''; width: 5px; height: 5px;
+      background: var(--lm); border-radius: 50%; animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .intro h1 {
+      font-size: 2.5rem; font-weight: 800; line-height: 1.12;
+      letter-spacing: -1.2px; margin-bottom: 14px;
+    }
+
+    .intro .sub {
+      color: var(--t2); font-size: .9rem; line-height: 1.65;
+      max-width: 360px; margin-bottom: 36px;
+    }
+
+    .btn-start {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; border: none; border-radius: 16px;
+      padding: 22px 28px;
+      background: var(--ac); color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.25rem; font-weight: 800;
+      letter-spacing: -.2px; cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 8px 40px rgba(91,111,255,.35);
+    }
+    .btn-start:hover { opacity: .9; transform: translateY(-2px); box-shadow: 0 14px 50px rgba(91,111,255,.45); }
+    .btn-start:active { transform: scale(.99); }
+
+    /* ── OPTION CARDS ── */
+    .q-tag { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--t3); margin-bottom: 10px; }
+    .q-h { font-size: 1.55rem; font-weight: 800; letter-spacing: -.5px; line-height: 1.2; margin-bottom: 22px; }
+
+    .opts { display: flex; flex-direction: column; gap: 9px; }
+
+    .opt {
+      background: var(--s1); border: 1.5px solid var(--b1); border-radius: 13px;
+      padding: 15px 16px; cursor: pointer;
+      display: flex; align-items: center; gap: 14px;
+      position: relative; overflow: hidden;
+      transition: border-color .18s, transform .18s, background .18s;
+      user-select: none;
+    }
+    .opt::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(91,111,255,.07), transparent 60%);
+      opacity: 0; transition: opacity .18s;
+    }
+    .opt:hover { border-color: var(--b2); transform: translateX(3px); }
+    .opt:hover::after { opacity: 1; }
+    .opt.sel { border-color: var(--ac); background: var(--ac2); transform: translateX(3px); }
+    .opt.sel::after { opacity: 1; }
+
+    .oi {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--s2); border: 1px solid var(--b1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; flex-shrink: 0; transition: all .18s; position: relative; z-index: 1;
+    }
+    .opt.sel .oi { background: var(--ac3); border-color: var(--ac); }
+
+    .ot { flex: 1; position: relative; z-index: 1; }
+    .ot strong { display: block; font-size: .88rem; font-weight: 600; color: var(--t1); }
+    .ot span { font-size: .74rem; color: var(--t2); line-height: 1.4; }
+
+    .ck {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--ac);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: scale(.3);
+      transition: all .22s cubic-bezier(.34,1.56,.64,1);
+      flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .opt.sel .ck { opacity: 1; transform: scale(1); }
+    .ck svg { width: 11px; height: 11px; }
+
+    /* ── FIELDS ── */
+    .fields { display: flex; flex-direction: column; gap: 13px; }
+    .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .fld { display: flex; flex-direction: column; gap: 7px; }
+    .fld label { font-size: .78rem; font-weight: 500; color: var(--t2); }
+    .fld input {
+      background: var(--s1); border: 1.5px solid var(--b1); border-radius: 10px;
+      padding: 12px 14px; color: var(--t1);
+      font-family: 'DM Sans', sans-serif; font-size: .875rem;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .fld input:focus { outline: none; border-color: var(--ac); box-shadow: 0 0 0 3px rgba(91,111,255,.13); }
+    .fld input::placeholder { color: var(--b2); }
+
+    .err {
+      display: none; background: rgba(248,113,113,.08);
+      border: 1px solid rgba(248,113,113,.2); border-radius: 9px;
+      padding: 10px 14px; color: var(--red); font-size: .8rem; margin-top: 8px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      border: none; border-radius: 12px; padding: 15px 28px;
+      font-family: 'DM Sans', sans-serif; font-size: .96rem; font-weight: 700;
+      cursor: pointer; transition: all .18s; text-decoration: none; width: 100%;
+    }
+    .btn-ac { background: var(--ac); color: #fff; }
+    .btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+    .btn:active:not(:disabled) { transform: scale(.98); }
+    .btn:disabled { opacity: .38; cursor: not-allowed; transform: none !important; }
+
+    .brow { margin-top: 20px; }
+    .fp { text-align: center; color: var(--t3); font-size: .74rem; margin-top: 10px; line-height: 1.5; }
+
+    /* ── SPINNER ── */
+    .spin-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 80px 0;
+    }
+    .spin {
+      width: 46px; height: 46px;
+      border: 3px solid var(--b1); border-top-color: var(--ac); border-right-color: var(--lm);
+      border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin-msg { font-size: .9rem; color: var(--t2); font-weight: 500; }
+
+    /* ═══════════════════════════════════════
+       RESULT: FIT
+    ═══════════════════════════════════════ */
+    .fit-screen { display: flex; flex-direction: column; align-items: center; padding-top: 8px; }
+
+    .fit-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--lm2); border: 1px solid rgba(216,236,106,.28); color: var(--lm);
+      font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      padding: 5px 13px; border-radius: 100px; margin-bottom: 20px;
+    }
+
+    .fit-h {
+      font-size: 2rem; font-weight: 800; letter-spacing: -.6px; line-height: 1.18;
+      text-align: center; margin-bottom: 12px;
+    }
+
+    .fit-sub {
+      font-size: .88rem; color: var(--t2); line-height: 1.65;
+      text-align: center; max-width: 380px; margin-bottom: 28px;
+    }
+
+    /* THE BIG CTA */
+    .big-cta {
+      width: 100%;
+      background: var(--lm);
+      border-radius: 18px;
+      padding: 32px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+      text-decoration: none;
+      display: block;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 0 0 0 rgba(216,236,106,0);
+    }
+
+    .big-cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
+    }
+
+    .big-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 60px rgba(216,236,106,.25);
+    }
+
+    .big-cta:active { transform: scale(.99); }
+
+    .cta-pre {
+      display: block; font-size: .72rem; font-weight: 700;
+      letter-spacing: .09em; text-transform: uppercase;
+      color: rgba(9,9,11,.5); margin-bottom: 8px; position: relative; z-index: 1;
+    }
+
+    .cta-main {
+      display: block; font-size: 1.55rem; font-weight: 800;
+      letter-spacing: -.5px; line-height: 1.2; color: #09090b;
+      margin-bottom: 4px; position: relative; z-index: 1;
+    }
+
+    .cta-sub {
+      display: block; font-size: .82rem; font-weight: 500;
+      color: rgba(9,9,11,.6); position: relative; z-index: 1;
+    }
+
+    .cta-arrow {
+      display: inline-block;
+      background: #09090b; color: var(--lm);
+      font-size: .85rem; font-weight: 700;
+      padding: 10px 20px; border-radius: 10px;
+      margin-top: 18px; position: relative; z-index: 1;
+      transition: background .18s;
+    }
+
+    .big-cta:hover .cta-arrow { background: #111; }
+
+    .scar {
+      display: flex; align-items: center; justify-content: center;
+      gap: 7px; font-size: .74rem; color: var(--t3); margin-bottom: 24px;
+    }
+    .sdot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; animation: blink 1.5s infinite; }
+
+    .proof-row { display: flex; gap: 10px; width: 100%; margin-bottom: 6px; }
+    .proof {
+      flex: 1; background: var(--s1); border: 1px solid var(--b1);
+      border-radius: 10px; padding: 12px 8px; text-align: center;
+    }
+    .proof .pn { display: block; font-size: 1.1rem; font-weight: 800; color: var(--lm); letter-spacing: -.4px; }
+    .proof .pl { display: block; font-size: .65rem; color: var(--t3); margin-top: 3px; line-height: 1.35; }
+
+    /* ═══════════════════════════════════════
+       RESULT: NOT FIT
+    ═══════════════════════════════════════ */
+    .nf-screen { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 8px; }
+
+    .nf-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--ac2); border: 1px solid var(--ac3); color: var(--ac);
+      font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      padding: 5px 13px; border-radius: 100px; margin-bottom: 20px;
+    }
+
+    .nf-h { font-size: 1.75rem; font-weight: 800; letter-spacing: -.5px; line-height: 1.2; margin-bottom: 12px; }
+    .nf-sub { font-size: .88rem; color: var(--t2); line-height: 1.65; max-width: 380px; margin-bottom: 28px; }
+
+    .nf-box {
+      width: 100%; background: var(--s1); border: 1px solid var(--b1);
+      border-radius: 16px; padding: 26px; text-align: left; margin-bottom: 14px;
+    }
+    .nf-box h3 { font-size: 1rem; font-weight: 700; color: var(--lm); margin-bottom: 8px; }
+    .nf-box p { font-size: .84rem; color: var(--t2); line-height: 1.62; margin-bottom: 20px; }
+    .nf-box a { text-decoration: none; display: block; }
+
+    .btn-nf {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--ac); color: #fff; border: none;
+      border-radius: 12px; padding: 15px 28px;
+      font-family: 'DM Sans', sans-serif; font-size: .96rem; font-weight: 700;
+      cursor: pointer; transition: all .18s; width: 100%;
+    }
+    .btn-nf:hover { opacity: .88; transform: translateY(-1px); }
+
+    @media (max-width: 480px) {
+      .intro h1 { font-size: 2rem; }
+      .q-h { font-size: 1.35rem; }
+      .f2 { grid-template-columns: 1fr; }
+      .stats { flex-wrap: wrap; }
+      .stat { min-width: 44%; }
+      .proof-row { flex-wrap: wrap; }
+      .proof { min-width: 44%; }
+      .cta-main { font-size: 1.3rem; }
+      .fit-h { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="pt" id="pt"><div class="pf" id="pf"></div></div>
+
+  <div class="hdr">
+    <button class="bk" id="bk" onclick="goBack()">&#8592; Back</button>
+    <div class="logo">Rally<b>Up</b></div>
+    <div class="sl" id="sl">1 of 3</div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ── STEP 0: INTRO ── -->
+    <div class="step active" id="s0">
+      <div class="intro">
+        <div class="badge">5 spots open this month</div>
+
+        <h1>Find out if you're<br><span style="color:var(--lm)">a fit in 60 seconds.</span></h1>
+
+        <p class="sub">3 questions. We review every application personally.</p>
+
+        <button class="btn-start" onclick="go(1)">Start your application &rarr;</button>
+        <p class="fp" style="margin-top:14px;">No spam &middot; Takes 60 seconds</p>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: ROLE ── -->
+    <div class="step" id="s1">
+      <p class="q-tag">Step 1 of 3</p>
+      <h2 class="q-h">What's your role?</h2>
+      <div class="opts">
+        <div class="opt" onclick="pick(this,'role','Founder / CEO',1)">
+          <div class="oi">&#127775;</div>
+          <div class="ot"><strong>Founder / CEO</strong><span>Building or running the company</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'role','C-Suite Executive',1)">
+          <div class="oi">&#127970;</div>
+          <div class="ot"><strong>C-Suite Executive</strong><span>CRO, CMO, COO or similar</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'role','VP / Director',1)">
+          <div class="oi">&#128200;</div>
+          <div class="ot"><strong>VP / Director</strong><span>Senior leader with real skin in the game</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'role','Managing for exec',1)">
+          <div class="oi">&#127919;</div>
+          <div class="ot"><strong>I manage this for an exec on my team</strong><span>CMO, EA or marketing lead applying on their behalf</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'role','Other',1)">
+          <div class="oi">&#128100;</div>
+          <div class="ot"><strong>Other</strong><span>Something different</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: PROBLEM ── -->
+    <div class="step" id="s2">
+      <p class="q-tag">Step 2 of 3</p>
+      <h2 class="q-h">What's your biggest LinkedIn challenge?</h2>
+      <div class="opts">
+        <div class="opt" onclick="pick(this,'problem','No time to post',2)">
+          <div class="oi">&#9200;</div>
+          <div class="ot"><strong>Never get around to posting</strong><span>I know I should but it keeps falling off the list</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'problem','Low reach or engagement',2)">
+          <div class="oi">&#128202;</div>
+          <div class="ot"><strong>I post but get little reach</strong><span>Effort goes in but the algorithm isn't rewarding it</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'problem','Content sounds generic',2)">
+          <div class="oi">&#129302;</div>
+          <div class="ot"><strong>My content sounds generic</strong><span>AI posts that could be from anyone</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'problem','No system or consistency',2)">
+          <div class="oi">&#128260;</div>
+          <div class="ot"><strong>No system, no consistency</strong><span>Sporadic posting that depends on inspiration</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="opt" onclick="pick(this,'problem','Just exploring',2)">
+          <div class="oi">&#128270;</div>
+          <div class="ot"><strong>Just exploring for now</strong><span>Researching options, no urgent need</span></div>
+          <div class="ck"><svg viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: DETAILS ── -->
+    <div class="step" id="s3">
+      <p class="q-tag">Step 3 of 3</p>
+      <h2 class="q-h">Almost there.</h2>
+      <div class="fields">
+        <div class="f2">
+          <div class="fld"><label>Full name</label><input type="text" id="nm" placeholder="Your name" autocomplete="name"></div>
+          <div class="fld"><label>Email</label><input type="email" id="em" placeholder="you@company.com" autocomplete="email"></div>
+        </div>
+        <div class="fld"><label>LinkedIn profile URL</label><input type="text" id="li" placeholder="linkedin.com/in/yourname"></div>
+        <div class="f2">
+          <div class="fld"><label>Company</label><input type="text" id="co" placeholder="Acme Inc."></div>
+          <div class="fld"><label>Website</label><input type="text" id="wb" placeholder="acme.com"></div>
+        </div>
+      </div>
+      <div class="err" id="err">Please fill in all fields.</div>
+      <div class="brow">
+        <button class="btn btn-ac" id="sb" onclick="doSubmit()">See my result &rarr;</button>
+      </div>
+      <p class="fp">Reviewed personally &middot; No spam ever</p>
+    </div>
+
+    <!-- ── STEP 4: LOADING ── -->
+    <div class="step" id="s4">
+      <div class="spin-wrap">
+        <div class="spin"></div>
+        <p class="spin-msg" id="sm">Reviewing your application...</p>
+      </div>
+    </div>
+
+    <!-- ── RESULT: FIT ── -->
+    <div class="step" id="rf">
+      <div class="fit-screen">
+        <div class="fit-badge">&#10003;&nbsp; You're a great fit</div>
+        <h2 class="fit-h" id="fh">You're exactly<br><span style="color:var(--lm)">who this is for.</span></h2>
+        <p class="fit-sub" id="fs">We'll build your exec's context layer before the call. In 20 minutes you watch the system generate content live for your specific profile. You keep everything we build.</p>
+
+        <a href="https://calendar.app.google/SDA5TMRMbqbPQWEn7" target="_blank" class="big-cta">
+          <span class="cta-pre">Book your free session</span>
+          <span class="cta-main">20 minutes with Alec.</span>
+          <span class="cta-sub">We build your content system before the call. You keep it either way.</span>
+          <span class="cta-arrow">Pick your time &rarr;</span>
+        </a>
+
+        <div class="scar">
+          <div class="sdot"></div>
+          <span>3 of 5 spots claimed this week. First come, first served.</span>
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- ── RESULT: NOT FIT ── -->
+    <div class="step" id="rnf">
+      <div class="nf-screen">
+        <div class="nf-badge">We'll stay in touch</div>
+        <h2 class="nf-h">Not quite right now.<br><span style="color:var(--lm)">But here's the system, free.</span></h2>
+        <p class="nf-sub">We're selective about who we take on this month. But we're not sending you away empty-handed.</p>
+        <div class="nf-box">
+          <h3>&#127381; The free content system</h3>
+          <p>The exact system we use to build exec content inside Claude. Set it up yourself in under 20 minutes and start generating authentic content that actually gets seen.</p>
+          <a href="https://voiceclonemethod.vercel.app/" target="_blank">
+            <button class="btn-nf">Get the free system &rarr;</button>
+          </a>
+        </div>
+        <p class="fp" style="line-height:1.6;">We review every application personally. We'll reach out when we have a spot and think you're a strong fit.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const ASU = 'https://script.google.com/macros/s/AKfycbyWB2ReuOZGX3fpJAcGGf8qr-4ACHnU-meT2n_-IEBmpSOAHix-Xe0Hjzk1nKNUjBIu/exec';
+  const st = { role:'', problem:'', name:'', email:'', linkedin:'', company:'', website:'' };
+  const hist = ['s0'];
+  let busy = false;
+
+  function isFit() { return st.role !== 'Other' && st.problem !== 'Just exploring'; }
+
+  function getHeadline() {
+    return {
+      'Founder / CEO':     "You're the founder<br><span style='color:var(--lm)'>this was built for.</span>",
+      'C-Suite Executive': "You're the exec<br><span style='color:var(--lm)'>this was built for.</span>",
+      'VP / Director':     "You're the leader<br><span style='color:var(--lm)'>this was built for.</span>",
+      'Managing for exec': "Your exec is exactly<br><span style='color:var(--lm)'>who this is for.</span>",
+    }[st.role] || "You're exactly<br><span style='color:var(--lm)'>who this is for.</span>";
+  }
+
+  function getSub() {
+    return {
+      'No time to post':         "We take the entire process off your plate. Posts drafted, delivered to Slack, approved in 2 minutes. Nothing else required from your exec.",
+      'Low reach or engagement': "The missing piece is context. Without it, LinkedIn buries AI content before anyone sees it. We build the layer that fixes that for your exec.",
+      'Content sounds generic':  "Generic content happens when AI has no context. We build a deep context layer so every post sounds like your exec and no one else.",
+      'No system or consistency':"We are the system. Posts flow every week whether your exec is busy, traveling, or offline. Consistency guaranteed.",
+    }[st.problem] || "We'll build your exec's context layer before the call. In 20 minutes you watch the system generate content live for your specific profile. You keep everything we build.";
+  }
+
+  // Navigation
+  function ui(n) {
+    const form = n >= 1 && n <= 3;
+    document.getElementById('pt').classList.toggle('on', form);
+    document.getElementById('bk').classList.toggle('on', n > 0 && n <= 3);
+    document.getElementById('sl').classList.toggle('on', form);
+    if (form) {
+      document.getElementById('pf').style.width = (n/3*100)+'%';
+      document.getElementById('sl').textContent = n+' of 3';
+    }
+  }
+
+  function show(id, dir) {
+    document.querySelectorAll('.step').forEach(s => { s.classList.remove('active','bwd'); s.style.display='none'; });
+    const el = document.getElementById(id);
+    el.style.display = 'flex'; void el.offsetWidth;
+    if (dir === 'b') el.classList.add('bwd');
+    el.classList.add('active');
+  }
+
+  function go(n) {
+    hist.push('s'+n); ui(n); show('s'+n,'f');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function goBack() {
+    hist.pop();
+    const prev = hist[hist.length-1] || 's0';
+    const n = parseInt(prev.replace('s','')) || 0;
+    ui(n); show(prev,'b');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function goTo(id) {
+    hist.push(id); ui(0); show(id,'f');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // Option cards
+  function pick(el, field, val, step) {
+    if (busy) return;
+    el.closest('.opts').querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+    el.classList.add('sel');
+    st[field] = val;
+    busy = true;
+    setTimeout(() => { busy = false; go(step+1); }, 420);
+  }
+
+  // Submit
+  async function doSubmit() {
+    const nm = document.getElementById('nm').value.trim();
+    const em = document.getElementById('em').value.trim();
+    const li = document.getElementById('li').value.trim();
+    const co = document.getElementById('co').value.trim();
+    const wb = document.getElementById('wb').value.trim();
+    const errEl = document.getElementById('err');
+
+    if (!nm || !em || !em.includes('@') || !li || !co || !wb) {
+      errEl.style.display = 'block'; return;
+    }
+    errEl.style.display = 'none';
+    st.name=nm; st.email=em; st.linkedin=li; st.company=co; st.website=wb;
+
+    const btn = document.getElementById('sb');
+    btn.disabled = true; btn.textContent = 'Submitting...';
+
+    // Log to Sheets
+    try {
+      fetch(ASU, {
+        method: 'POST', mode: 'no-cors',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          name: st.name, email: st.email, linkedin: st.linkedin,
+          company: st.company, website: st.website,
+          role: st.role, problem: st.problem,
+          outcome: isFit() ? 'Fit' : 'Not Fit'
+        })
+      });
+    } catch(e) { console.error(e); }
+
+    // Brief loading
+    ui(99); show('s4','f');
+    window.scrollTo({top:0,behavior:'smooth'});
+
+    const msgs = ['Reviewing your application...','Checking availability...','Almost done...'];
+    let i = 0;
+    const mel = document.getElementById('sm');
+    const interval = setInterval(() => {
+      i = (i+1) % msgs.length;
+      mel.textContent = msgs[i];
+    }, 700);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      if (isFit()) {
+        document.getElementById('fh').innerHTML = getHeadline();
+        document.getElementById('fs').textContent = getSub();
+        goTo('rf');
+      } else {
+        goTo('rnf');
+      }
+    }, 2000);
+  }
+
+  // Init
+  document.querySelectorAll('.step').forEach(s => { s.style.display='none'; });
+  const s0 = document.getElementById('s0');
+  s0.style.display = 'flex'; s0.classList.add('active');
+</script>
+</body>
+</html>
